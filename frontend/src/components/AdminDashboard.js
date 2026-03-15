@@ -20,7 +20,7 @@ function AdminDashboard() {
  useEffect(() => {
 
   const fetchData = () => {
-    fetch("http://http://university-maintenance-portal.onrender.com/api/complaint/all")
+    fetch("http://university-maintenance-portal.onrender.com/api/complaint/all")
       .then(res => res.json())
       .then(data => {
         const pending = data.filter(c => c.status === "Pending").length;
