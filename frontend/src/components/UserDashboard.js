@@ -12,14 +12,13 @@ function UserDashboard() {
     const token = localStorage.getItem("token");
     const userId = localStorage.getItem("userId");
 
-    // 🔐 Route Protection
     if (!token || !userId) {
       navigate("/", { replace: true });
       return;
     }
 
     const fetchData = () => {
-      fetch(`http://university-maintenance-portal.onrender.com/api/complaint/user/${userId}`)
+      fetch(`https://university-maintenance-portal.onrender.com/api/complaint/user/${userId}`)
         .then(res => res.json())
         .then(data => {
           setComplaints(data);
@@ -36,19 +35,9 @@ function UserDashboard() {
   }, [navigate]);
 
   return (
-    <div
-      style={{
-        padding: "40px",
-        maxWidth: "900px",
-        margin: "auto"
-      }}
-    >
+    <div style={{ padding: "40px", maxWidth: "900px", margin: "auto" }}>
 
-      <h2 style={{
-        marginBottom: "25px",
-        fontSize: "26px",
-        fontWeight: "600"
-      }}>
+      <h2 style={{ marginBottom: "25px", fontSize: "26px", fontWeight: "600" }}>
         Your Complaints
       </h2>
 
@@ -69,28 +58,24 @@ function UserDashboard() {
       </button>
 
       {loading ? (
-        <p style={{ fontSize: "16px" }}>Loading complaints...</p>
+        <p>Loading complaints...</p>
       ) : complaints.length === 0 ? (
-        <p style={{ fontSize: "16px" }}>No complaints found</p>
+        <p>No complaints found</p>
       ) : (
         complaints.map((item) => (
-          <div
-            key={item._id}
+          <div key={item._id}
             style={{
               background: "white",
               borderRadius: "12px",
               padding: "20px",
               marginBottom: "20px",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-              transition: "0.2s ease"
+              boxShadow: "0 4px 12px rgba(0,0,0,0.08)"
             }}
           >
 
-            <p style={{ marginBottom: "8px" }}>
-              <b>Status:</b> {item.status}
-            </p>
+            <p><b>Status:</b> {item.status}</p>
 
-            <p style={{ marginBottom: "8px" }}>
+            <p>
               <b>Priority:</b>{" "}
               <span
                 style={{
@@ -108,29 +93,19 @@ function UserDashboard() {
             </p>
 
             {item.location && (
-              <p style={{ marginBottom: "8px" }}>
-                <b>Location:</b> {item.location}
-              </p>
+              <p><b>Location:</b> {item.location}</p>
             )}
 
             {item.description && (
-              <p style={{ marginBottom: "8px" }}>
-                <b>Description:</b> {item.description}
-              </p>
+              <p><b>Description:</b> {item.description}</p>
             )}
 
-            {/* 🔥 NEW: LIVE LOCATION MAP LINK */}
             {item.latitude && item.longitude && (
-              <p style={{ marginBottom: "8px" }}>
+              <p>
                 <a
                   href={`https://www.google.com/maps?q=${item.latitude},${item.longitude}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{
-                    color: "#2563eb",
-                    fontWeight: "600",
-                    textDecoration: "none"
-                  }}
                 >
                   📍 View on Google Maps
                 </a>
@@ -139,13 +114,9 @@ function UserDashboard() {
 
             {item.image && (
               <img
-                src={`http://http://university-maintenance-portal.onrender.com/uploads/${item.image}`}
+                src={`https://university-maintenance-portal.onrender.com/uploads/${item.image}`}
                 alt="complaint"
-                style={{
-                  width: "220px",
-                  marginTop: "12px",
-                  borderRadius: "8px"
-                }}
+                style={{ width: "220px", marginTop: "12px", borderRadius: "8px" }}
               />
             )}
 

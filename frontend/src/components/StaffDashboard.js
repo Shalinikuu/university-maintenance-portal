@@ -8,13 +8,13 @@ function StaffDashboard() {
   const [priorityFilter, setPriorityFilter] = useState("All");
 
   useEffect(() => {
-    fetch("http://university-maintenance-portal.onrender.com/api/complaint/all")
+    fetch("https://university-maintenance-portal.onrender.com/api/complaint/all")
       .then(res => res.json())
       .then(data => setComplaints(data));
   }, []);
 
   const updateStatus = (id, status) => {
-    fetch(`http://university-maintenance-portal.onrender.com/api/complaint/update/${id}`, {
+    fetch(`https://university-maintenance-portal.onrender.com/api/complaint/update/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status })
@@ -65,7 +65,6 @@ function StaffDashboard() {
         Staff Dashboard
       </h2>
 
-      {/* FILTER BAR */}
       <div style={{
         background: "white",
         padding: "20px",
@@ -81,17 +80,11 @@ function StaffDashboard() {
           placeholder="Search by location..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          style={{
-            padding: "8px",
-            borderRadius: "6px",
-            border: "1px solid #ddd"
-          }}
         />
 
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          style={{ padding: "8px", borderRadius: "6px" }}
         >
           <option value="All">All Status</option>
           <option value="Pending">Pending</option>
@@ -102,7 +95,6 @@ function StaffDashboard() {
         <select
           value={priorityFilter}
           onChange={(e) => setPriorityFilter(e.target.value)}
-          style={{ padding: "8px", borderRadius: "6px" }}
         >
           <option value="All">All Priority</option>
           <option value="High">High</option>
@@ -160,7 +152,7 @@ function StaffDashboard() {
 
           {item.image && (
             <img
-              src={`http://http://university-maintenance-portal.onrender.com/uploads/${item.image}`}
+              src={`https://university-maintenance-portal.onrender.com/uploads/${item.image}`}
               width="200"
               alt="complaint"
               style={{ borderRadius: "10px" }}
