@@ -1,3 +1,5 @@
+require("dotenv").config();   // ✅ dotenv import
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -11,10 +13,11 @@ app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
-// MongoDB Connection
-mongoose.connect("mongodb://127.0.0.1:27017/maintenanceDB")
-  .then(() => console.log("MongoDB Connected"))
-  .catch(err => console.log(err));
+// ✅ MongoDB Atlas Connection
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB Atlas Connected ✅"))
+  .catch(err => console.log("MongoDB Error ❌", err));
+
 
 // Routes
 app.use("/api/auth", authRoutes);
