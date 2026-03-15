@@ -11,7 +11,6 @@ function UploadComplaint() {
 
   const navigate = useNavigate();
 
-  // 🔥 FORCE LOCATION FETCH
   const getLocation = () => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -55,13 +54,30 @@ function UploadComplaint() {
     formData.append("latitude", coords.lat);
     formData.append("longitude", coords.lng);
 
-    await fetch("http://university-maintenance-portal.onrender.com/api/complaint/upload", {
-      method: "POST",
-      body: formData
-    });
+    try {
 
-    alert("Complaint Submitted Successfully");
-    navigate("/user");
+      const response = await fetch(
+        "https://university-maintenance-portal.onrender.com/api/complaint/upload",
+        {
+          method: "POST",
+          body: formData
+        }
+      );
+
+      const data = await response.json();
+      console.log("Complaint Response:", data);
+
+      if (response.ok) {
+        alert("Complaint Submitted Successfully");
+        navigate("/user");
+      } else {
+        alert(data.message || "Failed to submit complaint");
+      }
+
+    } catch (error) {
+      console.error("Submit Error:", error);
+      alert("Server error while submitting complaint");
+    }
   };
 
   return (
