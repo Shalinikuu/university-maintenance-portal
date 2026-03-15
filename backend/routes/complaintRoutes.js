@@ -2,6 +2,12 @@ const express = require("express");
 const router = express.Router();
 const Complaint = require("../models/Complaint");
 const multer = require("multer");
+const fs = require("fs");
+
+// ===== Ensure uploads folder exists =====
+if (!fs.existsSync("uploads")) {
+  fs.mkdirSync("uploads");
+}
 
 // ===== Multer Config =====
 const storage = multer.diskStorage({
@@ -33,10 +39,14 @@ router.post("/upload", upload.single("image"), async (req, res) => {
       return res.status(400).json({ error: "User ID missing" });
     }
 
+    if (!req.file) {
+      return res.status(400).json({ error: "Image is required" });
+    }
+
     let priority = "Medium";
     const desc = description ? description.toLowerCase() : "";
 
-    // 🧠 AI-like Smart Logic
+    // 🧠 Smart Priority Logic
     if (
       category === "Electrical" ||
       category === "Plumbing" ||
@@ -60,7 +70,7 @@ router.post("/upload", upload.single("image"), async (req, res) => {
 
     const newComplaint = new Complaint({
       userId,
-      image: req.file ? req.file.filename : "",
+      image: req.file.filename,
       damageType: category,
       priority,
       status: "Pending",
@@ -74,12 +84,14 @@ router.post("/upload", upload.single("image"), async (req, res) => {
 
     res.status(200).json({
       message: "Complaint Submitted Successfully",
+      complaint: newComplaint
     });
 
   } catch (error) {
     console.log("Upload Error:", error);
+
     res.status(500).json({
-      error: error.message,
+      error: "Server error while submitting complaint"
     });
   }
 });
@@ -88,11 +100,13 @@ router.post("/upload", upload.single("image"), async (req, res) => {
 // ================== GET USER COMPLAINTS ==================
 router.get("/user/:userId", async (req, res) => {
   try {
+
     const complaints = await Complaint.find({
-      userId: req.params.userId,
+      userId: req.params.userId
     }).sort({ createdAt: -1 });
 
     res.status(200).json(complaints);
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -102,8 +116,12 @@ router.get("/user/:userId", async (req, res) => {
 // ================== GET ALL COMPLAINTS ==================
 router.get("/all", async (req, res) => {
   try {
-    const complaints = await Complaint.find().sort({ createdAt: -1 });
+
+    const complaints = await Complaint.find()
+      .sort({ createdAt: -1 });
+
     res.status(200).json(complaints);
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -113,13 +131,16 @@ router.get("/all", async (req, res) => {
 // ================== UPDATE STATUS ==================
 router.put("/update/:id", async (req, res) => {
   try {
-    await Complaint.findByIdAndUpdate(req.params.id, {
-      status: req.body.status,
-    });
+
+    await Complaint.findByIdAndUpdate(
+      req.params.id,
+      { status: req.body.status }
+    );
 
     res.status(200).json({
-      message: "Status Updated Successfully",
+      message: "Status Updated Successfully"
     });
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
