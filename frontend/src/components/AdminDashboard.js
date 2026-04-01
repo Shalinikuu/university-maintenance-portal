@@ -17,53 +17,82 @@ function AdminDashboard() {
     completed: 0
   });
 
- useEffect(() => {
+  const [loading, setLoading] = useState(true);
 
-  const fetchData = () => {
-    fetch("http://university-maintenance-portal.onrender.com/api/complaint/all")
-      .then(res => res.json())
-      .then(data => {
-        const pending = data.filter(c => c.status === "Pending").length;
-        const inProgress = data.filter(c => c.status === "In Progress").length;
-        const completed = data.filter(c => c.status === "Completed").length;
+  useEffect(() => {
 
-        setStats({ pending, inProgress, completed });
-      });
-  };
+    const fetchData = () => {
+      fetch("https://university-maintenance-portal.onrender.com/api/complaint/all")
+        .then(res => res.json())
+        .then(data => {
 
-  fetchData();
+          const pending = data.filter(c => c.status === "Pending").length;
+          const inProgress = data.filter(c => c.status === "In Progress").length;
+          const completed = data.filter(c => c.status === "Completed").length;
 
-  const interval = setInterval(fetchData, 5000);
+          setStats({ pending, inProgress, completed });
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error(err);
+          setLoading(false);
+        });
+    };
 
-  return () => clearInterval(interval);
+    fetchData();
+    const interval = setInterval(fetchData, 5000);
 
-}, []);
+    return () => clearInterval(interval);
+
+  }, []);
 
   const chartData = {
     labels: ["Pending", "In Progress", "Completed"],
     datasets: [
       {
+        label: "Complaints",
         data: [stats.pending, stats.inProgress, stats.completed],
         backgroundColor: [
           "#f39c12",
           "#3498db",
           "#2ecc71"
-        ]
+        ],
+        borderWidth: 1
       }
     ]
   };
 
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "bottom"
+      }
+    }
+  };
+
   return (
     <div style={{ padding: "30px", textAlign: "center" }}>
+      
       <h2>Admin Dashboard</h2>
 
-      <div style={{ width: "400px", margin: "0 auto" }}>
-        <Pie data={chartData} />
-      </div>
+      {loading ? (
+        <p>Loading data...</p>
+      ) : (
+        <>
+          <div style={{ width: "350px", margin: "0 auto" }}>
+            <Pie data={chartData} options={chartOptions} />
+          </div>
 
-      <div style={{ marginTop: "20px" }}>
-        <p>Total Complaints: {stats.pending + stats.inProgress + stats.completed}</p>
-      </div>
+          <div style={{ marginTop: "20px" }}>
+            <p><b>Pending:</b> {stats.pending}</p>
+            <p><b>In Progress:</b> {stats.inProgress}</p>
+            <p><b>Completed:</b> {stats.completed}</p>
+            <p><b>Total:</b> {stats.pending + stats.inProgress + stats.completed}</p>
+          </div>
+        </>
+      )}
+
     </div>
   );
 }
