@@ -5,6 +5,7 @@ import StaffDashboard from "./components/StaffDashboard";
 import UploadComplaint from "./components/UploadComplaint";
 import AdminDashboard from "./components/AdminDashboard";
 import Navbar from "./components/Navbar";
+import Register from "./components/Register";
 
 function App() {
 
@@ -21,6 +22,7 @@ function App() {
         <Route path="/staff" element={<StaffDashboard />} />
         <Route path="/upload" element={<UploadComplaint />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
     </>
   );

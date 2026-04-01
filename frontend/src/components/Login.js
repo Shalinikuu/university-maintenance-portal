@@ -9,7 +9,6 @@ function Login() {
 
   const handleLogin = async () => {
     try {
-
       const response = await fetch(
         "https://university-maintenance-portal.onrender.com/api/auth/login",
         {
@@ -51,7 +50,6 @@ function Login() {
   };
 
   return (
-
     <div style={{
       backgroundImage: "url('/bg.jpg')",
       height: "100vh",
@@ -63,7 +61,7 @@ function Login() {
     }}>
 
       <div style={{
-        background: "rgba(255, 255, 255, 0.85)",
+        background: "rgba(255, 255, 255, 0.9)",
         padding: "40px",
         borderRadius: "12px",
         boxShadow: "0 0 10px rgba(0,0,0,0.3)",
@@ -106,8 +104,26 @@ function Login() {
           Login
         </button>
 
-      </div>
+        <br /><br />
 
+        <p>New user?</p>
+
+        <button 
+          onClick={() => navigate("/register")}
+          style={{
+            width: "100%",
+            padding: "8px",
+            background: "green",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer"
+          }}
+        >
+          Register Here
+        </button>
+
+      </div>
     </div>
   );
 }
