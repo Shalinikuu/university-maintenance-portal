@@ -11,7 +11,7 @@ function Login() {
     try {
 
       const response = await fetch(
-  "https://university-maintenance-portal.onrender.com/api/auth/login",
+        "https://university-maintenance-portal.onrender.com/api/auth/login",
         {
           method: "POST",
           headers: {
@@ -22,19 +22,14 @@ function Login() {
       );
 
       const data = await response.json();
-      console.log("FULL LOGIN DATA:", data);
-
-      console.log("Login Response:", data);  // 🔥 debugging ke liye
 
       if (response.ok) {
 
-        // Local storage me save kar rahe hain
         localStorage.setItem("token", data.token);
         localStorage.setItem("role", data.role);
         localStorage.setItem("name", data.name);
         localStorage.setItem("userId", data.userId);
 
-        // 🔥 Role ke hisaab se redirect
         if (data.role === "user") {
           navigate("/user");
         } 
@@ -56,26 +51,62 @@ function Login() {
   };
 
   return (
-    <div style={{ textAlign: "center", marginTop: "100px" }}>
-      <h2>Login</h2>
 
-      <input
-        type="email"
-        placeholder="Enter Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <br /><br />
+    <div style={{
+      backgroundImage: "url('/bg.jpg')",
+      height: "100vh",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center"
+    }}>
 
-      <input
-        type="password"
-        placeholder="Enter Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <br /><br />
+      <div style={{
+        background: "rgba(255, 255, 255, 0.85)",
+        padding: "40px",
+        borderRadius: "12px",
+        boxShadow: "0 0 10px rgba(0,0,0,0.3)",
+        textAlign: "center",
+        width: "300px"
+      }}>
 
-      <button onClick={handleLogin}>Login</button>
+        <h2>Login</h2>
+
+        <input
+          type="email"
+          placeholder="Enter Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          style={{ width: "100%", padding: "8px" }}
+        />
+        <br /><br />
+
+        <input
+          type="password"
+          placeholder="Enter Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={{ width: "100%", padding: "8px" }}
+        />
+        <br /><br />
+
+        <button 
+          onClick={handleLogin}
+          style={{
+            width: "100%",
+            padding: "10px",
+            background: "#007bff",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer"
+          }}
+        >
+          Login
+        </button>
+
+      </div>
 
     </div>
   );
