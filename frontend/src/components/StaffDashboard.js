@@ -7,36 +7,23 @@ function StaffDashboard() {
   const [statusFilter, setStatusFilter] = useState("All");
   const [priorityFilter, setPriorityFilter] = useState("All");
 
-  // 🔥 NEW: remarks state per complaint
-  const [remarks, setRemarks] = useState({});
-
-  const staffId = localStorage.getItem("userId");
-
   useEffect(() => {
-    // ❗ CHANGE: only assigned complaints
-    fetch(`https://university-maintenance-portal.onrender.com/api/complaint/staff/${staffId}`)
+    fetch("https://university-maintenance-portal.onrender.com/api/complaint/all")
       .then(res => res.json())
       .then(data => setComplaints(data));
-  }, [staffId]);
+  }, []);
 
-  // 🔥 UPDATED: status + remark
   const updateStatus = (id, status) => {
-
     fetch(`https://university-maintenance-portal.onrender.com/api/complaint/update/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        status,
-        remark: remarks[id] || ""
-      })
+      body: JSON.stringify({ status })
     }).then(() => {
       setComplaints(prev =>
         prev.map(c =>
           c._id === id ? { ...c, status } : c
         )
       );
-
-      alert("Updated successfully!");
     });
   };
 
@@ -78,7 +65,6 @@ function StaffDashboard() {
         Staff Dashboard
       </h2>
 
-      {/* 🔍 FILTERS (UNCHANGED) */}
       <div style={{
         background: "white",
         padding: "20px",
@@ -118,7 +104,6 @@ function StaffDashboard() {
 
       </div>
 
-      {/* 🔥 COMPLAINT LIST */}
       {filteredComplaints.map(item => (
         <div key={item._id} style={{
           background: "white",
@@ -174,21 +159,6 @@ function StaffDashboard() {
             />
           )}
 
-          {/* 🔥 NEW: Remark Input */}
-          <div style={{ marginTop: "10px" }}>
-            <input
-              placeholder="Add remark..."
-              style={{ padding: "5px", width: "200px" }}
-              onChange={(e) =>
-                setRemarks(prev => ({
-                  ...prev,
-                  [item._id]: e.target.value
-                }))
-              }
-            />
-          </div>
-
-          {/* 🔥 BUTTONS */}
           <div style={{ marginTop: "15px" }}>
             <button
               onClick={() => updateStatus(item._id, "In Progress")}

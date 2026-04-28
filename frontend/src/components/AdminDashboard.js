@@ -17,11 +17,8 @@ function AdminDashboard() {
     completed: 0
   });
 
-  const [complaints, setComplaints] = useState([]);
-  const [staffList, setStaffList] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 🔥 FETCH DATA
   useEffect(() => {
 
     const fetchData = () => {
@@ -29,22 +26,16 @@ function AdminDashboard() {
         .then(res => res.json())
         .then(data => {
 
-          setComplaints(data);
-
           const pending = data.filter(c => c.status === "Pending").length;
           const inProgress = data.filter(c => c.status === "In Progress").length;
           const completed = data.filter(c => c.status === "Completed").length;
 
           setStats({ pending, inProgress, completed });
           setLoading(false);
-        });
-
-      // 👉 staff list fetch (IMPORTANT)
-      fetch("https://university-maintenance-portal.onrender.com/api/auth/all")
-        .then(res => res.json())
-        .then(users => {
-          const staff = users.filter(u => u.role === "staff");
-          setStaffList(staff);
+        })
+        .catch(err => {
+          console.error(err);
+          setLoading(false);
         });
     };
 
@@ -55,95 +46,50 @@ function AdminDashboard() {
 
   }, []);
 
-  // 🔥 ASSIGN STAFF
-  const assignStaff = (complaintId, staffId) => {
-    fetch(`https://university-maintenance-portal.onrender.com/api/complaint/assign/${complaintId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ staffId })
-    }).then(() => {
-      alert("Staff Assigned!");
-      window.location.reload();
-    });
-  };
-
   const chartData = {
     labels: ["Pending", "In Progress", "Completed"],
     datasets: [
       {
+        label: "Complaints",
         data: [stats.pending, stats.inProgress, stats.completed],
-        backgroundColor: ["#f39c12", "#3498db", "#2ecc71"]
+        backgroundColor: [
+          "#f39c12",
+          "#3498db",
+          "#2ecc71"
+        ],
+        borderWidth: 1
       }
     ]
   };
 
-  return (
-    <div style={{ padding: "30px" }}>
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "bottom"
+      }
+    }
+  };
 
-      <h2 style={{ textAlign: "center" }}>Admin Dashboard</h2>
+  return (
+    <div style={{ padding: "30px", textAlign: "center" }}>
+      
+      <h2>Admin Dashboard</h2>
 
       {loading ? (
-        <p>Loading...</p>
+        <p>Loading data...</p>
       ) : (
         <>
-          {/* 🔥 CHART */}
-          <div style={{ width: "300px", margin: "0 auto" }}>
-            <Pie data={chartData} />
+          <div style={{ width: "350px", margin: "0 auto" }}>
+            <Pie data={chartData} options={chartOptions} />
           </div>
 
-          {/* 🔥 STATS */}
-          <div style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: "20px",
-            marginTop: "20px"
-          }}>
-            <div>🟡 Pending: {stats.pending}</div>
-            <div>🔵 In Progress: {stats.inProgress}</div>
-            <div>🟢 Completed: {stats.completed}</div>
+          <div style={{ marginTop: "20px" }}>
+            <p><b>Pending:</b> {stats.pending}</p>
+            <p><b>In Progress:</b> {stats.inProgress}</p>
+            <p><b>Completed:</b> {stats.completed}</p>
+            <p><b>Total:</b> {stats.pending + stats.inProgress + stats.completed}</p>
           </div>
-
-          {/* 🔥 COMPLAINT LIST */}
-          <h3 style={{ marginTop: "30px" }}>All Complaints</h3>
-
-          {complaints.map(item => (
-            <div key={item._id} style={{
-              border: "1px solid #ddd",
-              padding: "20px",
-              marginBottom: "15px",
-              borderRadius: "10px"
-            }}>
-
-              <p><b>Status:</b> {item.status}</p>
-              <p><b>Priority:</b> {item.priority}</p>
-              <p><b>Description:</b> {item.description}</p>
-              <p><b>Location:</b> {item.location}</p>
-
-              {/* 🔥 Assigned Staff */}
-              <p>
-                <b>Assigned Staff:</b>{" "}
-                {item.assignedStaff
-                  ? item.assignedStaff.name
-                  : "Not Assigned"}
-              </p>
-
-              {/* 🔥 Assign Dropdown */}
-              <select
-                onChange={(e) =>
-                  assignStaff(item._id, e.target.value)
-                }
-              >
-                <option value="">Assign Staff</option>
-                {staffList.map(staff => (
-                  <option key={staff._id} value={staff._id}>
-                    {staff.name}
-                  </option>
-                ))}
-              </select>
-
-            </div>
-          ))}
-
         </>
       )}
 

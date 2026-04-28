@@ -25,6 +25,7 @@ const upload = multer({ storage: storage });
 // ================== UPLOAD COMPLAINT ==================
 router.post("/upload", upload.single("image"), async (req, res) => {
   try {
+
     const {
       userId,
       description,
@@ -45,6 +46,7 @@ router.post("/upload", upload.single("image"), async (req, res) => {
     let priority = "Medium";
     const desc = description ? description.toLowerCase() : "";
 
+    // 🧠 Smart Priority Logic
     if (
       category === "Electrical" ||
       category === "Plumbing" ||
@@ -61,6 +63,9 @@ router.post("/upload", upload.single("image"), async (req, res) => {
       desc.includes("minor")
     ) {
       priority = "Low";
+    }
+    else {
+      priority = "Medium";
     }
 
     const newComplaint = new Complaint({
@@ -83,8 +88,11 @@ router.post("/upload", upload.single("image"), async (req, res) => {
     });
 
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Server error" });
+    console.log("Upload Error:", error);
+
+    res.status(500).json({
+      error: "Server error while submitting complaint"
+    });
   }
 });
 
@@ -92,11 +100,12 @@ router.post("/upload", upload.single("image"), async (req, res) => {
 // ================== GET USER COMPLAINTS ==================
 router.get("/user/:userId", async (req, res) => {
   try {
+
     const complaints = await Complaint.find({
       userId: req.params.userId
     }).sort({ createdAt: -1 });
 
-    res.json(complaints);
+    res.status(200).json(complaints);
 
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -104,14 +113,14 @@ router.get("/user/:userId", async (req, res) => {
 });
 
 
-// ================== GET ALL (ADMIN) ==================
+// ================== GET ALL COMPLAINTS ==================
 router.get("/all", async (req, res) => {
   try {
+
     const complaints = await Complaint.find()
-      .populate("assignedStaff", "name email")
       .sort({ createdAt: -1 });
 
-    res.json(complaints);
+    res.status(200).json(complaints);
 
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -119,65 +128,17 @@ router.get("/all", async (req, res) => {
 });
 
 
-// ================== ASSIGN STAFF ==================
-router.put("/assign/:id", async (req, res) => {
-  try {
-    const { staffId } = req.body;
-
-    const updated = await Complaint.findByIdAndUpdate(
-      req.params.id,
-      {
-        assignedStaff: staffId,
-        status: "In Progress"
-      },
-      { new: true }
-    );
-
-    res.json(updated);
-
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
-// ================== STAFF COMPLAINTS ==================
-router.get("/staff/:staffId", async (req, res) => {
-  try {
-    const complaints = await Complaint.find({
-      assignedStaff: req.params.staffId
-    }).sort({ createdAt: -1 });
-
-    res.json(complaints);
-
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
-// ================== UPDATE STATUS + REMARK ==================
+// ================== UPDATE STATUS ==================
 router.put("/update/:id", async (req, res) => {
   try {
-    const { status, remark } = req.body;
 
-    const complaint = await Complaint.findById(req.params.id);
+    await Complaint.findByIdAndUpdate(
+      req.params.id,
+      { status: req.body.status }
+    );
 
-    if (!complaint) {
-      return res.status(404).json({ error: "Not found" });
-    }
-
-    complaint.status = status;
-
-    if (remark) {
-      complaint.remarks.push({ text: remark });
-    }
-
-    await complaint.save();
-
-    res.json({
-      message: "Updated",
-      complaint
+    res.status(200).json({
+      message: "Status Updated Successfully"
     });
 
   } catch (error) {

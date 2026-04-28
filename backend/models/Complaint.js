@@ -6,33 +6,11 @@ const complaintSchema = new mongoose.Schema(
     image: String,
     damageType: String,
     priority: String,
-
-    status: {
-      type: String,
-      enum: ["Pending", "In Progress", "Completed"],
-      default: "Pending"
-    },
-
+    status: String,
     description: String,
     location: String,
 
-    // ✅ NEW: Assigned Staff
-    assignedStaff: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User"
-    },
-
-    // ✅ NEW: Remarks by staff
-    remarks: [
-      {
-        text: String,
-        date: {
-          type: Date,
-          default: Date.now
-        }
-      }
-    ],
-
+    // 🔥 NEW LIVE LOCATION
     latitude: Number,
     longitude: Number
   },

@@ -70,17 +70,6 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// ================= GET ALL USERS (FOR ADMIN) =================
-router.get("/all", async (req, res) => {
-  try {
-    const users = await User.find();
 
-    res.json(users);
-
-  } catch (error) {
-    console.log("Fetch Users Error:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
 
 module.exports = router;
