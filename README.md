@@ -12,7 +12,7 @@ Users can register, log in, and raise complaints, while admins and staff can tra
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Tech StacK
 
 ### Frontend
 
