@@ -5,7 +5,7 @@ Users can register, log in, and raise complaints, while admins and staff can tra
 
 ---
 
-## 🚀 Live Demo
+## 🚀 Live Demmo
 
 * 🌐 Frontend: https://university-maintenance-portal.vercel.app/
 * ⚙️ Backend: https://university-maintenance-portal.onrender.com/
